@@ -1,13 +1,14 @@
 const Koa = require('koa');
-const koaBody = require('koa-body');
+const bodyParser = require('koa-bodyparser');
 const router = require('koa-router')();
+
 const app = new Koa();
 const port = process.env.PORT || 8080;
 
-app.use(koaBody());
+app.use(bodyParser());
 
-router.get('/(.*)', koaBody(),
-    (ctx) => {
+router.get('/(.*)', 
+    (ctx, next) => {
         const response = {
             url: ctx.request.url,
             headers: ctx.request.headers,
@@ -17,8 +18,8 @@ router.get('/(.*)', koaBody(),
     }
 );
 
-router.post('/(.*)', koaBody(),
-    (ctx) => {
+router.post('/(.*)', 
+    (ctx, next) => {
         const response = {
             url: ctx.request.url,
             headers: ctx.request.headers,
@@ -30,6 +31,7 @@ router.post('/(.*)', koaBody(),
 );
 
 app.use(router.routes());
+app.use(router.allowedMethods());
 app.listen(port);
 
 console.log(`Listening on port ${port}`);
